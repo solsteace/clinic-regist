@@ -79,6 +79,10 @@ class Pasien:
     @classmethod
     def get_pasien(cls, idx):
         return cls.DAFTAR_PASIEN[idx]
+    
+    @classmethod
+    def show_daftar_pasien(self):
+        return 
 
     def __init__(self, name):
         self.name = name
@@ -94,8 +98,6 @@ class Pasien:
                 f"{self.klinik_perawatan._get_waktu_antrian(self.nomor_antrean)} menit lagi"
         return "Anda tidak terdaftar di klinik manapun!"
 
-    def get_daftar_pasien(self):
-        pass
 
 # Initial condition (Usahakan nama disini sinkron sama client.py)
 NAMA_KLINIK = ["Nusa Harapan", "Do'a Ibu", "Pasti Bugar" ]
@@ -111,10 +113,15 @@ def cek_daftar_klinik():
     return "=== DAFTAR KLINIK === \n" + buffer;
 
 def display_waktu_tunggu_pasien(idxPasien):
+    if(idxPasien < 0):
+        return "Anda belum terdaftar sebagai pasien di sistem kami"
     pasien = Pasien.get_pasien(idxPasien)
     return pasien.get_waktu_antrian()
 
 def daftar(idxPasien, klinik):
+    if(idxPasien < 0):
+        return "Anda belum terdaftar sebagai pasien di sistem kami"
+
     """
     Mendaftarkan pasien di klinik tertentu
     Parameter:
