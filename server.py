@@ -64,7 +64,11 @@ class Klinik:
 
     def get_antrean(self):
         """ Mengembalikan antrean saat ini """
-        pass
+        return self.antrean
+    
+
+    
+
 
 
 # Buat 'struct' pasien
@@ -100,7 +104,7 @@ class Pasien:
 
 
 # Initial condition (Usahakan nama disini sinkron sama client.py)
-NAMA_KLINIK = ["Nusa Harapan", "Do'a Ibu", "Pasti Bugar" ]
+NAMA_KLINIK = ["Telkom Medika", "Do'a Ibu", "Mayapada" ]
 KLINIK = [Klinik(NAMA_KLINIK[i]) for i in range(3)]
 
 # Fungsi-fungsi yang bisa diakses secara remote. Semua ini fungsi khusus diakses oleh
@@ -118,26 +122,28 @@ def display_waktu_tunggu_pasien(idxPasien):
     pasien = Pasien.get_pasien(idxPasien)
     return pasien.get_waktu_antrian()
 
-def daftar(idxPasien, klinik):
+def daftar(idxPasien, idxKlinik):
+    
     if(idxPasien < 0):
         return "Anda belum terdaftar sebagai pasien di sistem kami"
+    if (idxKlinik >= len(KLINIK)):
+        return "Klinik tidak ada"
+    klinik = KLINIK[idxKlinik]
+    pasien = Pasien.get_pasien(idxPasien)
+    klinik.register(pasien)
+    return f"Pasien {pasien.name} berhasil mendaftar di klinik {klinik.nama}"
 
-    """
-    Mendaftarkan pasien di klinik tertentu
-    Parameter:
-    pasien: Pasien
-    klinik: Klinik
-    """
-    pass
 
     
 def cek_antrian_klinik(klinik):
-    """ 
-    Mengembalikan string berisi info tentang daftar pasien yang mengantre di klinik tersebut
-    Parameter:
-    klinik: Klinik
-    """ 
-    pass
+    antrian = klinik.get_antrean()
+    daftar=""
+    for i in range(0,len(antrian)):
+        daftar += str(i+1)+". "+antrian[i].name +"\n"
+
+    return daftar
+
+
 
 def buat_pasien(nama):
     """ 
@@ -157,11 +163,27 @@ if __name__ == "__main__":
     p2 = buat_pasien("Budiono")
     p3 = buat_pasien("Sujono")
 
+
     KLINIK[1].register(Pasien.get_pasien(p1));
     KLINIK[1].register(Pasien.get_pasien(p2));
     KLINIK[1].register(Pasien.get_pasien(p3));
+
+
 
     print(cek_daftar_klinik())
     print(Pasien.get_pasien(p1).get_waktu_antrian())
     print(Pasien.get_pasien(p2).get_waktu_antrian())
     print(Pasien.get_pasien(p3).get_waktu_antrian())
+    # print(cek_antrian_klinik(KLINIK[1]))
+
+
+    with SimpleXMLRPCServer(("localhost",6969),requestHandler=RequestHandler, allow_none=True) as server:
+        server.register_introspection_functions()
+        
+        # Register the methods of the ServerVoting class with the server
+        server.register_function(cek_daftar_klinik)
+        server.register_function(display_waktu_tunggu_pasien)
+        server.register_function(daftar)
+        server.register_function(cek_antrian_klinik)
+        server.register_function(buat_pasien)
+
