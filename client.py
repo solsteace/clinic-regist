@@ -2,8 +2,8 @@ from xmlrpc.client import ServerProxy
 
 client = ServerProxy('http://localhost:6969')
 
-idxKlinik = 0
-idxPasien = 0
+idxKlinik = -1
+idxPasien = -1
 
 print("Selamat Datang di Antrean Registrasi Medis")
 
@@ -19,7 +19,6 @@ while True:
     menu = int(input("Pilih Menu : "))
     print("------------------------------")
 
-    myIdxPasien = -1;
     if (menu == 1):
         print(client.cek_daftar_klinik())
         print("------------------------------")
@@ -28,7 +27,7 @@ while True:
         print("------------------------------")
         idxKlinik = int(input("Pilih nomor klinik tujuan registrasi: ")) - 1
         nama_pasien = input("Masukkan nama Anda: ")
-        tgl_lahir_pasien = input("Masukkan tanggal lahir anda (dd-mm-yyy): ")
+        tgl_lahir_pasien = input("Masukkan tanggal lahir anda (dd-mm-yyyy): ")
         idxPasien = client.buat_pasien(nama_pasien, tgl_lahir_pasien)
         result = client.daftar(idxPasien, idxKlinik)
         print("------------------------------")
@@ -49,3 +48,5 @@ while True:
         break
     else:
         print("Menu Tidak Tersedia")
+
+    print("")
