@@ -136,7 +136,8 @@ def cek_antrian_klinik(idxKlinik):
     antrian = KLINIK[idxKlinik].get_antrean()
     buffer=""
     for i in range(0,len(antrian)):
-        buffer += f"{str(i+1)}. {antrian[i].name}\n"
+        pasien = antrian[i]
+        buffer += f"{str(i+1)}. {pasien.name} - {pasien.waktu_pengobatan}min\n"
 
     if buffer == "":
         buffer += "Tidak ada antrian\n"
