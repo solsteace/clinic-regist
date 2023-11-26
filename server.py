@@ -109,13 +109,13 @@ def cek_daftar_klinik():
     return "=== DAFTAR KLINIK === \n" + buffer;
 
 def display_waktu_tunggu_pasien(idxPasien):
-    if(idxPasien < 0):
+    if(idxPasien < 0 or idxPasien >= len(Pasien.DAFTAR_PASIEN)):
         return "Anda belum terdaftar sebagai pasien di sistem kami"
     pasien = Pasien.get_pasien(idxPasien)
     return "Pasien "+pasien.name+" "+pasien.get_waktu_antrian()
 
 def daftar(idxPasien, idxKlinik):
-    if(idxPasien < 0):
+    if(idxPasien < 0 or idxPasien >= len(Pasien.DAFTAR_PASIEN)):
         return "Anda belum terdaftar sebagai pasien di sistem kami"
     if (idxKlinik >= len(KLINIK) or idxKlinik < 0):
         return "Klinik tidak ada"
