@@ -27,6 +27,7 @@ while True:
         print("------------------------------")
         idxKlinik = int(input("Pilih nomor klinik tujuan registrasi: ")) - 1
         nama_pasien = input("Masukkan nama Anda: ")
+        tgl_lahir_pasien = input("Masukkan tanggal lahir anda (dd-mm-yyy): ")
         idxPasien = client.buat_pasien(nama_pasien)
         result = client.daftar(idxPasien, idxKlinik)
         print("------------------------------")
