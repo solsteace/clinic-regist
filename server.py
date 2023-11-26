@@ -81,13 +81,13 @@ class Pasien:
     def show_daftar_pasien(self):
         return 
 
-    def __init__(self, name):
+    def __init__(self, name, tanggal_lahir):
         self.name = name
+        self.tanggal_lahir = tanggal_lahir
         self.nomor_antrean = -1;
         self.nomor_rekor_medis = -1;
         self.waktu_pengobatan = -1;
         self.klinik_perawatan = None;
-        Pasien.tambah_pasien(self)
 
     def get_waktu_antrian(self):
         if(self.klinik_perawatan != None):
@@ -135,13 +135,13 @@ def cek_antrian_klinik(idxKlinik):
         return "Daftar antrian klinik "+KLINIK[idxKlinik].nama+":"+"\n"+"Tidak ada antrian"
     return "Daftar antrian klinik "+KLINIK[idxKlinik].nama+":"+"\n"+daftar
 
-def buat_pasien(nama):
+def buat_pasien(nama, tanggal_lahir):
     """ 
     Client-side awalnya 'tidak punya' akun pasien jadi tidak bisa daftar di klinik manapun
     (handle di client-side). Fungsi ini mengembalikan indeks dari pasien untuk digunakan 
     oleh client sebagai identifier.
     """
-    return Pasien.tambah_pasien(Pasien(nama))
+    return Pasien.tambah_pasien(Pasien(nama, tanggal_lahir))
     
 if __name__ == "__main__":
     

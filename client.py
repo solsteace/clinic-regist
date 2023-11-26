@@ -19,6 +19,7 @@ while True:
     menu = int(input("Pilih Menu : "))
     print("------------------------------")
 
+    myIdxPasien = -1;
     if (menu == 1):
         print(client.cek_daftar_klinik())
         print("------------------------------")
@@ -28,7 +29,7 @@ while True:
         idxKlinik = int(input("Pilih nomor klinik tujuan registrasi: ")) - 1
         nama_pasien = input("Masukkan nama Anda: ")
         tgl_lahir_pasien = input("Masukkan tanggal lahir anda (dd-mm-yyy): ")
-        idxPasien = client.buat_pasien(nama_pasien)
+        idxPasien = client.buat_pasien(nama_pasien, tgl_lahir_pasien)
         result = client.daftar(idxPasien, idxKlinik)
         print("------------------------------")
         print(result)
@@ -41,7 +42,6 @@ while True:
         print(client.cek_antrian_klinik(idxKlinik))
         print("------------------------------")
     elif menu == 4:
-        idxPasien = int(input("Masukkan idxPasien anda: "))
         print("------------------------------")
         print(client.display_waktu_tunggu_pasien(idxPasien))
         print("------------------------------")
