@@ -77,10 +77,6 @@ class Pasien:
     def get_pasien(cls, idx):
         return cls.DAFTAR_PASIEN[idx]
     
-    @classmethod
-    def show_daftar_pasien(self):
-        return 
-
     def __init__(self, name, tanggal_lahir):
         self.name = name
         self.tanggal_lahir = tanggal_lahir
@@ -95,8 +91,14 @@ class Pasien:
                 f"{self.klinik_perawatan._get_waktu_antrian(self.nomor_antrean)} menit lagi"
         return "Anda tidak terdaftar di klinik manapun!"
 
+def pasien_terdaftar(idxPasien):
+    return not(idxPasien < 0 or idxPasien >= len(Pasien.DAFTAR_PASIEN))
+
+def klinik_tersedia(idxKlinik):
+    return not(idxKlinik >= len(KLINIK) or idxKlinik < 0)
+
 # Initial condition (Usahakan nama disini sinkron sama client.py)
-NAMA_KLINIK = ["Telkom Medika", "Do'a Ibu", "Mayapada" ]
+NAMA_KLINIK = ["Telkomedika", "Do'a Ibu", "Mayapada" ]
 KLINIK = [Klinik(NAMA_KLINIK[i]) for i in range(3)]
 
 # Fungsi-fungsi yang bisa diakses secara remote. Semua ini fungsi khusus diakses oleh
@@ -109,31 +111,36 @@ def cek_daftar_klinik():
     return "=== DAFTAR KLINIK === \n" + buffer;
 
 def display_waktu_tunggu_pasien(idxPasien):
-    if(idxPasien < 0 or idxPasien >= len(Pasien.DAFTAR_PASIEN)):
+    if(not(pasien_terdaftar(idxPasien))):
         return "Anda belum terdaftar sebagai pasien di sistem kami"
+
     pasien = Pasien.get_pasien(idxPasien)
     return "Pasien "+pasien.name+" "+pasien.get_waktu_antrian()
 
 def daftar(idxPasien, idxKlinik):
-    if(idxPasien < 0 or idxPasien >= len(Pasien.DAFTAR_PASIEN)):
+    if(not(pasien_terdaftar)):
         return "Anda belum terdaftar sebagai pasien di sistem kami"
-    if (idxKlinik >= len(KLINIK) or idxKlinik < 0):
+
+    if(not(klinik_tersedia)):
         return "Klinik tidak ada"
+
     klinik = KLINIK[idxKlinik]
     pasien = Pasien.get_pasien(idxPasien)
     klinik.register(pasien)
     return f"Pasien {pasien.name} berhasil mendaftar di klinik {klinik.nama} dengan idxPasien = {idxPasien}"
 
 def cek_antrian_klinik(idxKlinik):
-    if (idxKlinik >= len(KLINIK) or idxKlinik < 0):
+    if (not(klinik_tersedia)):
         return "Klinik tidak ada"
+
     antrian = KLINIK[idxKlinik].get_antrean()
-    daftar=""
+    buffer=""
     for i in range(0,len(antrian)):
-        daftar += str(i+1)+". "+antrian[i].name +"\n"
-    if daftar == "":
-        return "Daftar antrian klinik "+KLINIK[idxKlinik].nama+":"+"\n"+"Tidak ada antrian"
-    return "Daftar antrian klinik "+KLINIK[idxKlinik].nama+":"+"\n"+daftar
+        buffer += f"{str(i+1)}. {antrian[i].name}\n"
+
+    if buffer == "":
+        buffer += "Tidak ada antrian\n"
+    return f"Daftar antrian klinik {KLINIK[idxKlinik].nama}:\n{buffer}"
 
 def buat_pasien(nama, tanggal_lahir):
     """ 
@@ -144,32 +151,11 @@ def buat_pasien(nama, tanggal_lahir):
     return Pasien.tambah_pasien(Pasien(nama, tanggal_lahir))
     
 if __name__ == "__main__":
-    
     # server settings
     PORT = 6969;
     ADDRESS = "localhost"
-    '''
-    # Contoh pemakaian
-    p1 = buat_pasien("Sumarno")
-    p2 = buat_pasien("Budiono")
-    p3 = buat_pasien("Sujono")
 
-
-    KLINIK[1].register(Pasien.get_pasien(p1));
-    KLINIK[1].register(Pasien.get_pasien(p2));
-    KLINIK[1].register(Pasien.get_pasien(p3));
-
-
-
-    print(cek_daftar_klinik())
-    print(Pasien.get_pasien(p1).get_waktu_antrian())
-    print(Pasien.get_pasien(p2).get_waktu_antrian())
-    print(Pasien.get_pasien(p3).get_waktu_antrian())
-    # print(cek_antrian_klinik(KLINIK[1]))
-    '''
-
-
-    with SimpleXMLRPCServer(("localhost",6969),requestHandler=RequestHandler, allow_none=True) as server:
+    with SimpleXMLRPCServer((ADDRESS,PORT),requestHandler=RequestHandler, allow_none=True) as server:
         server.register_introspection_functions()
         
         # Register the methods of the ServerVoting class with the server
@@ -181,4 +167,3 @@ if __name__ == "__main__":
 
         print(f"Server sedang berjalan di {ADDRESS}:{PORT}")
         server.serve_forever()
-
